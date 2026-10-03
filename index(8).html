@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Robot Tools · Laboratórios Interativos de Robótica</title>
+<meta name="description" content="Ferramentas interativas para aprendizado de Robótica: protótipos educacionais e humanoides." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-0: #060a07;
+  --bg-1: #0b110d;
+  --bg-2: #101a13;
+  --bg-3: #152219;
+  --bg-panel: #0d150f;
+  --border: #1c2e22;
+  --border-soft: #16241b;
+  --border-strong: #27402f;
+
+  --text-0: #e7f5eb;
+  --text-1: #b5d3bd;
+  --text-2: #6d8b75;
+  --text-3: #405a47;
+
+  /* Primary: robot green */
+  --green: #22c55e;
+  --green-soft: #14532d40;
+  --green-glow: #22c55e33;
+
+  /* Secondary accents */
+  --lime: #a3e635;
+  --lime-soft: #36531040;
+  --lime-glow: #a3e63533;
+
+  --emerald: #34d399;
+  --emerald-soft: #0d3b2940;
+  --emerald-glow: #34d39933;
+
+  --teal: #2dd4bf;
+  --teal-soft: #0d373340;
+  --teal-glow: #2dd4bf33;
+
+  --gold: #fbbf24;
+  --gold-soft: #5c3d0a40;
+  --gold-glow: #fbbf2433;
+
+  --sky: #38bdf8;
+  --sky-soft: #0c4a6e40;
+
+  --violet: #a78bfa;
+  --violet-soft: #4c1d9540;
+
+  --phos: #4ade80;
+  --phos-soft: #14532d40;
+
+  --radius: 4px;
+  --radius-lg: 8px;
+
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'Chakra Petch', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  min-height: 100%;
+  display: flex; flex-direction: column;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, #0c3318 0%, transparent 60%),
+    radial-gradient(800px 400px at -10% 100%, #0a2912 0%, transparent 55%),
+    var(--bg-0);
+  color: var(--text-0);
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,0.012) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(to bottom, rgba(255,255,255,0.012) 1px, transparent 1px) 0 0 / 48px 48px;
+  pointer-events: none; z-index: 0;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ========== header ========== */
+header.top-bar {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(6,10,7,0.97), rgba(6,10,7,0.85));
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand .logo-mark {
+  display: inline-flex; width: 32px; height: 32px; flex-shrink: 0;
+  align-items: center; justify-content: center; position: relative;
+}
+.brand .logo-mark::before {
+  content: ''; position: absolute; inset: 0;
+  border: 1.5px solid var(--green); border-radius: 6px;
+  animation: pulse-robot 3s ease-in-out infinite;
+}
+.brand .logo-mark::after {
+  content: ''; position: absolute;
+  width: 8px; height: 8px;
+  background: var(--green); border-radius: 50%;
+  box-shadow: 0 0 14px var(--green), 0 0 30px var(--green-glow);
+}
+@keyframes pulse-robot {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.12) rotate(3deg); opacity: 0.45; }
+}
+.brand h1 {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 20px; letter-spacing: 0.2em;
+}
+.brand .tag {
+  color: var(--text-2); font-size: 10px;
+  letter-spacing: 0.25em; text-transform: uppercase;
+}
+.brand .tag em {
+  font-style: italic; font-family: var(--font-serif);
+  font-size: 14px; color: var(--green); letter-spacing: 0.04em;
+}
+.brand-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.brand-title-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand-byline {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.02em;
+  color: var(--text-2);
+}
+.brand-byline a {
+  display: inline-flex; align-items: center; gap: 4px;
+  color: var(--text-1); transition: color 0.15s;
+}
+.brand-byline a:hover { color: var(--green); text-decoration: underline; }
+.brand-byline .gh-icon { color: var(--text-2); transition: color 0.15s; }
+.brand-byline a:hover .gh-icon { color: var(--green); }
+.brand-byline .sep { color: var(--text-3); }
+.brand-byline .dash { color: var(--text-3); }
+
+.top-stats {
+  display: flex; gap: 18px; margin-left: auto;
+  font-family: var(--font-mono); font-size: 11px;
+}
+.top-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  padding-right: 18px; border-right: 1px solid var(--border);
+}
+.top-stat:last-child { border-right: none; padding-right: 0; }
+.top-stat .label {
+  color: var(--text-2); font-size: 9px;
+  letter-spacing: 0.2em; text-transform: uppercase;
+}
+.top-stat .value { color: var(--text-0); font-weight: 500; }
+.top-stat.live .value { color: var(--phos); }
+.top-stat .value .unit { color: var(--text-2); margin-left: 4px; font-weight: 300; }
+
+/* ========== content ========== */
+.content {
+  position: relative; z-index: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+  flex: 1;
+}
+
+/* ========== section headers ========== */
+.section-header {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 18px; margin-top: 40px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.section-header:first-child { margin-top: 0; }
+.section-header .dot {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%; flex-shrink: 0;
+}
+.section-header .dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.section-header .dot.lime { background: var(--lime); box-shadow: 0 0 8px var(--lime); }
+.section-header .dot.teal { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+.section-header .dot.gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.section-header h2 {
+  font-family: var(--font-display);
+  font-weight: 600; font-size: 13px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--text-0);
+}
+.section-header .count {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-2); letter-spacing: 0.06em;
+  margin-left: auto;
+}
+
+/* ========== sub-section label ========== */
+.sub-label {
+  display: flex; align-items: center; gap: 8px;
+  margin: 22px 0 12px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-3);
+}
+.sub-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border-soft);
+}
+
+/* ========== PRIMARY cards grid (LABs) ========== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+/* ========== SECONDARY cards grid (complementary) ========== */
+.cards-grid-sm {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 8px;
+}
+
+/* ========== PRIMARY card (LAB) ========== */
+.tool-card {
+  background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px 16px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.tool-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--card-accent, var(--green)), transparent);
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+.tool-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--card-accent, var(--green-glow)) 0%, transparent 55%);
+  opacity: 0.06;
+  pointer-events: none;
+}
+.tool-card:hover {
+  border-color: color-mix(in srgb, var(--card-accent, var(--green)) 40%, var(--border-strong));
+  background: linear-gradient(180deg, var(--bg-3), var(--bg-2));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px var(--border-strong);
+}
+.tool-card:hover::before { opacity: 1; }
+.tool-card:hover::after { opacity: 0.12; }
+.tool-card:focus-visible { outline: 2px solid var(--card-accent, var(--green)); outline-offset: 2px; }
+
+.tool-card .card-top {
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; z-index: 1;
+}
+.tool-card .status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--phos-soft);
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  color: var(--phos);
+}
+.tool-card .status-badge .live-dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: var(--phos); border-radius: 50%;
+  box-shadow: 0 0 6px var(--phos);
+  animation: blink 1.6s ease-in-out infinite;
+}
+@keyframes blink { 50% { opacity: 0.3; } }
+
+/* neutral reference tag */
+.ref-tag {
+  display: inline-flex; align-items: center;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--bg-0);
+  border: 1px solid var(--border-strong);
+  color: var(--text-2);
+}
+
+.lab-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-display); font-size: 9px;
+  font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+}
+.lab-badge.green-b { background: var(--green-soft); border: 1px solid rgba(34,197,94,0.25); color: var(--green); }
+.lab-badge.lime-b { background: var(--lime-soft); border: 1px solid rgba(163,230,53,0.25); color: var(--lime); }
+.lab-badge.emerald-b { background: var(--emerald-soft); border: 1px solid rgba(52,211,153,0.25); color: var(--emerald); }
+.lab-badge.teal-b { background: var(--teal-soft); border: 1px solid rgba(45,212,191,0.25); color: var(--teal); }
+.lab-badge.gold-b { background: var(--gold-soft); border: 1px solid rgba(251,191,36,0.25); color: var(--gold); }
+
+.tool-card .card-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; font-size: 18px; flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+.card-icon.green-icon, .sm-icon.green-icon { background: var(--green-soft); border: 1px solid rgba(34,197,94,0.15); }
+.card-icon.lime-icon, .sm-icon.lime-icon { background: var(--lime-soft); border: 1px solid rgba(163,230,53,0.15); }
+.card-icon.emerald-icon, .sm-icon.emerald-icon { background: var(--emerald-soft); border: 1px solid rgba(52,211,153,0.15); }
+.card-icon.teal-icon, .sm-icon.teal-icon { background: var(--teal-soft); border: 1px solid rgba(45,212,191,0.15); }
+.card-icon.gold-icon, .sm-icon.gold-icon { background: var(--gold-soft); border: 1px solid rgba(251,191,36,0.15); }
+
+.tool-card h3 {
+  font-family: var(--font-display);
+  font-weight: 600; font-size: 15px;
+  letter-spacing: 0.06em;
+  color: var(--text-0);
+  line-height: 1.3;
+  position: relative; z-index: 1;
+}
+.tool-card .card-desc {
+  font-family: var(--font-body);
+  font-size: 11.5px; line-height: 1.55;
+  color: var(--text-2);
+  flex: 1;
+  position: relative; z-index: 1;
+}
+.tool-card .card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  margin-top: auto;
+  position: relative; z-index: 1;
+}
+.tool-card .card-author {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-2);
+}
+.tool-card .card-author .avatar {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 7px; font-weight: 700; color: var(--text-2);
+}
+.tool-card .card-year {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-3);
+}
+
+/* ========== card stat chips ========== */
+.card-stats {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  position: relative; z-index: 1;
+}
+.card-stat-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--bg-0);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.card-stat-chip strong {
+  color: var(--card-accent, var(--green)); font-weight: 600;
+}
+
+/* accent colors */
+.tool-card[data-accent="green"] { --card-accent: var(--green); }
+.tool-card[data-accent="lime"] { --card-accent: var(--lime); }
+.tool-card[data-accent="emerald"] { --card-accent: var(--emerald); }
+.tool-card[data-accent="teal"] { --card-accent: var(--teal); }
+.tool-card[data-accent="gold"] { --card-accent: var(--gold); }
+
+/* ========== SECONDARY card (compact row) ========== */
+.tool-card-sm {
+  background: var(--bg-0);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.tool-card-sm:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.tool-card-sm .sm-icon {
+  width: 28px; height: 28px; min-width: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 5px;
+  font-size: 13px;
+}
+.tool-card-sm .sm-body { flex: 1; min-width: 0; }
+.tool-card-sm .sm-body h4 {
+  font-family: var(--font-display);
+  font-weight: 500; font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-1);
+  line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tool-card-sm .sm-body p {
+  font-family: var(--font-mono); font-size: 9.5px;
+  color: var(--text-3); margin-top: 2px;
+  line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tool-card-sm .sm-arrow {
+  color: var(--text-3);
+  font-family: var(--font-mono); font-size: 11px;
+  transition: color 0.15s, transform 0.15s;
+  flex-shrink: 0;
+}
+.tool-card-sm:hover .sm-arrow { color: var(--green); transform: translateX(3px); }
+.tool-card-sm:hover .sm-body h4 { color: var(--text-0); }
+
+/* ========== footer ========== */
+footer {
+  padding: 12px 24px;
+  background: linear-gradient(180deg, rgba(6,10,7,0.7), rgba(6,10,7,0.95));
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-2);
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; text-align: center;
+  position: relative; z-index: 1;
+}
+footer .author a { color: var(--green); text-decoration: none; }
+footer .author a:hover { text-decoration: underline; }
+footer .ts { color: var(--text-3); }
+footer .ts a { color: var(--text-2); text-decoration: none; }
+footer .ts a:hover { color: var(--green); text-decoration: underline; }
+footer .ver { color: var(--text-3); letter-spacing: 0.04em; }
+footer .ver a { color: var(--text-2); }
+footer .ver a:hover { color: var(--green); text-decoration: underline; }
+
+/* ========== responsive ========== */
+@media (max-width: 768px) {
+  header.top-bar { flex-wrap: wrap; padding: 10px 16px; gap: 10px; }
+  .top-stats { display: none; }
+  .content { padding: 20px 16px 40px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .cards-grid-sm { grid-template-columns: 1fr; }
+  .section-header h2 { font-size: 11px; }
+  footer { padding: 10px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand .logo-mark::before, .tool-card .status-badge .live-dot { animation: none; }
+  .tool-card, .tool-card-sm { transition: none; }
+  .tool-card:hover, .tool-card-sm:hover { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header class="top-bar">
+  <div class="brand">
+    <span class="logo-mark"></span>
+    <div class="brand-text">
+      <div class="brand-title-row">
+        <h1>ROBOT TOOLS</h1>
+        <span class="tag">Laboratórios <em>Interativos de Robótica</em></span>
+      </div>
+      <div class="brand-byline">
+        <a href="https://rmayormartins.github.io" target="_blank" rel="noopener">Author Ramon Mayor Martins, Ph.D.</a>
+        <span class="sep">·</span>
+        <a href="https://github.com/rmayormartins" target="_blank" rel="noopener"><svg class="gh-icon" viewBox="0 0 16 16" width="11" height="11" fill="currentColor" aria-hidden="true" style="vertical-align:-1px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>@rmayormartins</a>
+        <span class="sep">·</span>
+        <a href="https://www.ifsc.edu.br/web/campus-sao-jose" target="_blank" rel="noopener">IFSC SJ</a>
+        <span class="dash">-</span>
+        <a href="https://wiki.sj.ifsc.edu.br/index.php/P%C3%A1gina_principal" target="_blank" rel="noopener">Área de Telecomunicações</a>
+      </div>
+    </div>
+  </div>
+  <div class="top-stats">
+    <div class="top-stat live">
+      <span class="label">Status</span>
+      <span class="value">ONLINE</span>
+    </div>
+    <div class="top-stat">
+      <span class="label">Prototypes</span>
+      <span class="value">2</span>
+    </div>
+    <div class="top-stat">
+      <span class="label">Humanoids</span>
+      <span class="value">1</span>
+    </div>
+    <div class="top-stat">
+      <span class="label">Total</span>
+      <span class="value">3<span class="unit">tools</span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ========== CONTENT ========== -->
+<main class="content">
+
+  <!-- ============================================================== -->
+  <!--                    EDUCATIONAL PROTOTYPES                       -->
+  <!-- ============================================================== -->
+  <div class="section-header">
+    <span class="dot green"></span>
+    <h2>Educational Prototypes</h2>
+    <span class="count">2 labs</span>
+  </div>
+
+  <!-- ---- Simuladores programáveis ---- -->
+  <div class="sub-label">Simuladores Programáveis</div>
+  <div class="cards-grid">
+
+    <a href="https://rmayormartins.github.io/arducar-lab/" target="_blank" rel="noopener" class="tool-card" data-accent="green">
+      <div class="card-top">
+        <div class="card-icon green-icon">🚗</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="lab-badge green-b">LAB</span>
+          <span class="status-badge"><span class="live-dot"></span> Running</span>
+        </div>
+      </div>
+      <h3>ArduCar.lab</h3>
+      <p class="card-desc">Simulador de carrinho Arduino 2WD programado em C/C++ do Arduino Uno, com ponte H L298N, ultrassom HC-SR04 no servo, sensores de linha, Bluetooth HC-05 e desafios com estrelas</p>
+      <div class="card-stats">
+        <span class="card-stat-chip"><strong>C/C++</strong> Arduino Uno</span>
+        <span class="card-stat-chip"><strong>11</strong> Desafios</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-author"><span class="avatar">RM</span> rmayormartins</span>
+        <span class="card-year">2026</span>
+      </div>
+    </a>
+
+    <a href="https://rmayormartins.github.io/myfll-lab/" target="_blank" rel="noopener" class="tool-card" data-accent="green">
+      <div class="card-top">
+        <div class="card-icon green-icon">🧱</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="lab-badge green-b">LAB</span>
+          <span class="status-badge"><span class="live-dot"></span> Running</span>
+        </div>
+      </div>
+      <h3>MyFLL.lab</h3>
+      <p class="card-desc">Simulador de robô no estilo FIRST LEGO League programado em Python do hub SPIKE Prime e Pybricks, com montagem do robô, editor de mesa, missões e partida cronometrada de 2:30</p>
+      <div class="card-stats">
+        <span class="card-stat-chip"><strong>Python</strong> SPIKE 3 / Pybricks</span>
+        <span class="card-stat-chip"><strong>20</strong> Exemplos</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-author"><span class="avatar">RM</span> rmayormartins</span>
+        <span class="card-year">2026</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!--                           HUMANOIDS                             -->
+  <!-- ============================================================== -->
+  <div class="section-header">
+    <span class="dot lime"></span>
+    <h2>Humanoids</h2>
+    <span class="count">1 lab</span>
+  </div>
+
+  <!-- ---- Humanoides ---- -->
+  <div class="sub-label">Laboratórios de Humanoides</div>
+  <div class="cards-grid">
+
+    <a href="Humanoid1-lab.html" class="tool-card" data-accent="lime">
+      <div class="card-top">
+        <div class="card-icon lime-icon">🦾</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="lab-badge lime-b">LAB</span>
+          <span class="status-badge"><span class="live-dot"></span> Running</span>
+        </div>
+      </div>
+      <h3>Humanoid1.lab</h3>
+      <p class="card-desc">Laboratório interativo de robô humanoide programável, com física de corpo rígido, atuadores com limites reais, controle de equilíbrio e caminhada, telemetria e vista 3D</p>
+      <div class="card-stats">
+        <span class="card-stat-chip"><strong>3D</strong> Simulação</span>
+        <span class="card-stat-chip"><strong>API</strong> Programável</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-author"><span class="avatar">RM</span> rmayormartins</span>
+        <span class="card-year">2026</span>
+      </div>
+    </a>
+
+  </div>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <span class="author">Author: Ramon Mayor Martins, Ph.D. · <a href="https://rmayormartins.github.io" target="_blank" rel="noopener">rmayormartins.github.io</a></span>
+  <span class="ts"><a href="https://www.ifsc.edu.br/web/campus-sao-jose" target="_blank" rel="noopener">IFSC</a> · Campus São José · Área de Telecomunicações</span>
+  <span class="ver">Robot Tools v0.1 // 2026 // <a href="mailto:ramon.mayor@ifsc.edu.br">ramon.mayor@ifsc.edu.br</a></span>
+</footer>
+
+</body>
+</html>
